@@ -1,0 +1,43 @@
+group 'com.zhsl'
+version '1.0'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven {
+        url "http://download.osgeo.org/webdav/geotools/"
+    }
+    maven {
+        url "https://repository.jboss.org/nexus/content/repositories/thirdparty-releases/"
+    }
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.39'
+    compile group: 'org.postgresql', name: 'postgresql', version: '9.4.1212'
+    compile group: 'org.apache.poi', name: 'poi', version: '3.15'
+    compile group: 'org.apache.poi', name: 'poi-ooxml', version: '3.15'
+
+    compile ("commons-io:commons-io:2.4")
+    compile ("commons-lang:commons-lang:2.4")
+    compile "com.alibaba:fastjson:1.2.4"
+
+    // https://mvnrepository.com/artifact/org.jsoup/jsoup
+    compile group: 'org.jsoup', name: 'jsoup', version: '1.8.3'
+
+    // https://mvnrepository.com/artifact/org.geotools/gt-api
+    compile group: 'org.geotools', name: 'gt-api', version: '13.0'
+    // https://mvnrepository.com/artifact/org.geotools/gt-shapefile
+    compile group: 'org.geotools', name: 'gt-shapefile', version: '13.0'
+    // https://mvnrepository.com/artifact/org.geotools/gt-main
+    compile group: 'org.geotools', name: 'gt-main', version: '13.0'
+
+    // https://mvnrepository.com/artifact/javax.media/jai-core
+    compile group: 'javax.media', name: 'jai-core', version: '1.1.3'
+
+}
