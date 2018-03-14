@@ -31,30 +31,36 @@ public class JDBCTools {
 
     /**
      * 获取数据库连接
+     *
      * @return 数据库连接
      */
-    public static Connection getConn() throws Exception {
+    public static Connection getConn(boolean printLog) throws Exception {
         Class.forName(DRIVER);
-        System.out.println("成功加载驱动");
+        if (printLog)
+            System.out.println("成功加载驱动");
 
         String url = "";
         Connection connection = null;
-        if("com.mysql.jdbc.Driver".equals(DRIVER)){
+        if ("com.mysql.jdbc.Driver".equals(DRIVER)) {
             url = "jdbc:mysql://" + HOST + ":" + PORT + "/" + DATABASE_NAME + "?user=" + USER_NAME + "&password=" + PASSWORD + "&useUnicode=true&characterEncoding=UTF8&useSSL=true";
             connection = DriverManager.getConnection(url);
-        }else if("org.postgresql.Driver".equals(DRIVER)){
+        } else if ("org.postgresql.Driver".equals(DRIVER)) {
             url = URL;
             connection = DriverManager.getConnection(url, USER_NAME, PASSWORD);
         }
-
-        System.out.println("成功获取连接");
+        if (printLog)
+            System.out.println("成功获取连接");
         return connection;
+    }
+
+    public static Connection getConn() throws Exception {
+        return getConn(true);
     }
 
     /**
      * 关闭资源
      */
-    public static void closeResource(Connection conn, Statement st, ResultSet rs) {
+    public static void closeResource(Connection conn, Statement st, ResultSet rs, boolean printLog) {
         if (rs != null) {
             try {
                 rs.close();
@@ -79,27 +85,34 @@ public class JDBCTools {
                 e.printStackTrace();
             }
         }
+        if (printLog)
         System.out.println("成功关闭资源");
+    }
+
+    public static void closeResource(Connection conn, Statement st, ResultSet rs) {
+        closeResource(conn, st, rs, true);
     }
 
     /**
      * 查询SQL
+     *
      * @param sql 查询语句
      * @return 数据集合
      * @throws SQLException
      */
-    public static List<Map<String, String>> query(String sql) throws Exception {
+    public static List<Map<String, String>> query(String sql, boolean printLog) throws Exception {
         Connection connection = null;
         Statement statement = null;
         ResultSet resultSet = null;
         List<Map<String, String>> resultList = null;
 
         try {
-            connection = JDBCTools.getConn();
+            connection = JDBCTools.getConn(printLog);
 
             statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
             resultSet = statement.executeQuery(sql);
-            System.out.println("SQL : " + sql);
+            if (printLog)
+                System.out.println("SQL : " + sql);
 
             ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
             int columnCount = resultSetMetaData.getColumnCount();
@@ -118,19 +131,23 @@ public class JDBCTools {
                 }
                 resultList.add(resultMap);
             }
-            System.out.println("成功查询数据库，查得数据：" + resultList);
-        } catch(Throwable t) {
+            if (printLog)
+                System.out.println("成功查询数据库，查得数据：" + resultList);
+        } catch (Throwable t) {
             // TODO 处理异常
             t.printStackTrace();
         } finally {
-            JDBCTools.closeResource(connection, statement, resultSet);
+            JDBCTools.closeResource(connection, statement, resultSet, printLog);
         }
 
         return resultList;
     }
-
+    public static List<Map<String, String>> query(String sql) throws Exception {
+        return query(sql, true);
+    }
     /**
      * 执行SQL
+     *
      * @param sql 执行的SQL
      * @return 操作条数
      */
@@ -155,7 +172,7 @@ public class JDBCTools {
             }
             */
 
-        } catch(Exception e) {
+        } catch (Exception e) {
             // 处理异常：回滚事务后抛出异常
             e.printStackTrace();
             // connection.rollback();
@@ -189,7 +206,7 @@ public class JDBCTools {
             }
             */
 
-        } catch(Exception e) {
+        } catch (Exception e) {
             // 处理异常：回滚事务后抛出异常
             e.printStackTrace();
             // connection.rollback();

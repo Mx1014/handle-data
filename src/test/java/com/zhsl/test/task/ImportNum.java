@@ -45,11 +45,11 @@ class ImportData{
             MyNumber mn = new MyNumber(Integer.parseInt(s.split("=")[0]),s.split("=")[1].replace(",",""));
             list.add(mn);
         }
-        System.out.println(list.get(list.size()-1));
+        //System.out.println(list.get(list.size()-1));
 
         int maxNum = 0;
         String sql = "select case when num is null then 0 else max(num) end as maxNum from n_num";
-        List<Map<String, String>> data = JDBCTools.query(sql);
+        List<Map<String, String>> data = JDBCTools.query(sql,false);
         if(data!=null&&data.size()>0)
             maxNum = Integer.parseInt(data.get(0).get("maxNum"));
         for (MyNumber mn:list

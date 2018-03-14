@@ -19,7 +19,7 @@ public class QueryDataToJson {
         JDBCTools.USER_NAME = "postgres";
         JDBCTools.PASSWORD = "slydba123";
         try {
-            String sql = "select monm,lgtd,lttd from wcdb.b_monitorobjectinf where motype='01' AND adcd='520221000000000'";
+            String sql = "select mocd,monm,lgtd,lttd from wcdb.b_monitorobjectinf where motype='01' AND adcd='520221000000000'";
             List<Map<String, String>> list =  JDBCTools.query(sql);
 
             List<Map<String, Object>> data = new ArrayList<>();
@@ -27,8 +27,10 @@ public class QueryDataToJson {
                  ) {
                 Map<String, Object> map = new HashMap<>();
                 BigDecimal[] strs = new BigDecimal[]{new BigDecimal(m.get("lgtd").toString()),new BigDecimal(m.get("lttd").toString()),new BigDecimal(10)};
+                map.put("mocd",m.get("mocd").toString());
                 map.put("name",m.get("monm").toString());
                 map.put("value",strs);
+                map.put("type","02");
                 data.add(map);
             }
             System.out.println(JSON.toJSONString(data,true));
