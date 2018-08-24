@@ -75,6 +75,8 @@ public class ReaderShape {
                         list.add(map);
                     }else if (pro.getValue() instanceof com.vividsolutions.jts.geom.MultiPolygon) {
                         com.vividsolutions.jts.geom.MultiPolygon m = (com.vividsolutions.jts.geom.MultiPolygon)pro.getValue();
+                        map.put(pro.getName().toString(),pro.getValue());
+                        list.add(map);
                     }else {
                         System.out.println(pro.getName() + " = " + pro.getValue());
                     }

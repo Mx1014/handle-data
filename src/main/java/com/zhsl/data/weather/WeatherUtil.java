@@ -79,7 +79,7 @@ public class WeatherUtil {
         WeatherUtil demo = new WeatherUtil();
         try {
             String url = demo.generateGetNowWeatherURL(
-                    "WKDXH1Q2BNXZ",
+                    "WKGFHTQKVQ0H",
                     "zh-Hans",
                     "c"
             );

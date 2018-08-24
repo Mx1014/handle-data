@@ -42,4 +42,14 @@ public class ReaderTest {
         System.out.println(JSON.toJSONString(reservoir,true));
         System.out.println(JSON.toJSONString(waterworks,true));
     }
+
+    @Test
+    public void test2(){
+        List<Map<String,Object>> list =  ReaderShape.readSHP("E:\\code\\vs\\SmartWaterCloud\\GZFCApplication\\Debug\\fly\\data\\行政区划\\DJ_region.shp");
+        for (Map<String,Object> map:list
+             ) {
+            System.out.println(map.toString());
+        }
+
+    }
 }

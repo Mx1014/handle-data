@@ -2,9 +2,14 @@ package com.zhsl.test.util;
 
 import com.zhsl.data.jdbc.mysql.JDBCTools;
 import com.zhsl.data.util.ExcelUtil;
+import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.Row;
 import org.junit.Test;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +17,47 @@ import java.util.Map;
 public class ExcelUtilTest {
 
     @Test
-    public void importWeather(){
+    public void imporDuty() {
+        try {
+            ExcelUtil eu = new ExcelUtil();
+            eu.setExcelPath("F:\\work\\水投集团度汛看板\\水库值班\\黔中值班.xlsx");
+            eu.setSelectedSheetIdx(0);
+            List<Row> list = eu.readExcel();
+            Connection connection = null;
+            Statement statement = null;
+            String url = "jdbc:postgresql://42.123.116.132:5432/WaterCloudDB";
+            String user = "postgres";
+            String password = "watercloud-!@#123QWE";
+            Class.forName("org.postgresql.Driver");
+            connection = DriverManager.getConnection(url, user, password);
+            Statement sta = connection.createStatement();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            boolean isFirst = true;
+            for (Row row : list
+                    ) {
+                String projnm = ExcelUtil.getCellValueForCell(row.getCell(0));
+                if (!isFirst&&!StringUtils.isEmpty(projnm)) {
+                    String date = sdf.format(row.getCell(1).getDateCellValue());
+                    String leader = ExcelUtil.getCellValueForCell(row.getCell(2));
+                    String leaderPhone = ExcelUtil.getCellValueForCell(row.getCell(3));
+                    String monitor = ExcelUtil.getCellValueForCell(row.getCell(4));
+                    String monitorPhone = ExcelUtil.getCellValueForCell(row.getCell(5));
+                    String dutyPhone = ExcelUtil.getCellValueForCell(row.getCell(6));
+                    monitor = monitor.replaceAll("（","(").replaceAll("）",")").replaceAll("，",",");
+                    String insertSql = "INSERT INTO wcprojdb.p_duty(projnm,date,leader,leader_phone,monitor,monitor_phone,duty_phone) " +
+                            "values('" + projnm + "',to_date('"+date+"','yyyy-mm-dd'),'"+leader+ "','"+leaderPhone+ "','"+monitor+ "','"+monitorPhone+ "','"+dutyPhone+"')";
+                    System.out.println(insertSql);
+                    sta.executeUpdate(insertSql);
+                }
+                isFirst = false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void importWeather() {
         try {
             ExcelUtil eu = new ExcelUtil();
             eu.setExcelPath("F:\\thinkpage_cities\\thinkpage_cities.xls");
@@ -23,7 +68,7 @@ public class ExcelUtilTest {
             for (int i = 0; i < list.size(); i++) {
                 if (i > 0) {
                     List<String> tmp = new ArrayList<>();
-                    if("中国".equals(ExcelUtil.getCellValueForCell(list.get(i).getCell(3)))){
+                    if ("中国".equals(ExcelUtil.getCellValueForCell(list.get(i).getCell(3)))) {
                         String value = ExcelUtil.getCellValueForCell(list.get(i).getCell(0));
                         tmp.add(value);
                         value = ExcelUtil.getCellValueForCell(list.get(i).getCell(1));
@@ -41,12 +86,12 @@ public class ExcelUtilTest {
             JDBCTools.PASSWORD = "rootlys";
             JDBCTools.DATABASE_NAME = "zhsldb";
 
-            for (List<String> mlist:myList
-                 ) {
-                String sql = "insert into c_weather_code(cid,cname,province,city) values('"+mlist.get(0)+"','"+mlist.get(1)+"','"+mlist.get(2)+"','"+mlist.get(3)+"')";
+            for (List<String> mlist : myList
+                    ) {
+                String sql = "insert into c_weather_code(cid,cname,province,city) values('" + mlist.get(0) + "','" + mlist.get(1) + "','" + mlist.get(2) + "','" + mlist.get(3) + "')";
                 JDBCTools.execute(sql);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
