@@ -23,7 +23,7 @@ public class SSCTest {
     public void test(){
         Calendar c = Calendar.getInstance();
         c.setTime(new Date());
-        c.set(Calendar.DAY_OF_MONTH,1);
+        c.add(Calendar.DAY_OF_MONTH,-1);
         while (c.getTime().before(new Date())){
             inDB(sdf.format(c.getTime()));
             c.add(Calendar.DAY_OF_MONTH,1);
