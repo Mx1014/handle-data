@@ -4,15 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MyNumber {
-    private String num;
+    private Integer num;
     private String rewardNum;
     private Integer group;
 
-    public String getNum() {
+    public Integer getNum() {
         return num;
     }
 
-    public void setNum(String num) {
+    public void setNum(Integer num) {
         this.num = num;
     }
 
@@ -35,7 +35,7 @@ public class MyNumber {
     public MyNumber() {
     }
 
-    public MyNumber(String num, String rewardNum) {
+    public MyNumber(Integer num, String rewardNum) {
         rewardNum = rewardNum.trim().replace(" ","");
         this.num = num;
         this.rewardNum = rewardNum;
