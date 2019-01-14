@@ -35,7 +35,6 @@ public class SSCTest {
             String url = "https://m.500.com/info/kaijiang/ssc/"+date+".shtml";
             Document doc = Jsoup.parse(new URL(url), 5000);
             Elements list = doc.body().getElementsByClass("info-table-cont");
-            List<MyNumber> data = new ArrayList<>();
             for (int i=0;i<list.size();i++
                     ) {
                 Element e = list.get(i);
