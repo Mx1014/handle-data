@@ -1,16 +1,22 @@
 package com.zhsl.test.util;
 
+import com.alibaba.fastjson.JSON;
 import com.zhsl.data.jdbc.mysql.JDBCTools;
+import com.zhsl.data.jdbc.pg.PgJdbc;
 import com.zhsl.data.util.ExcelUtil;
 import org.apache.commons.lang.StringUtils;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.junit.Test;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,16 +42,16 @@ public class ExcelUtilTest {
             for (Row row : list
                     ) {
                 String projnm = ExcelUtil.getCellValueForCell(row.getCell(0));
-                if (!isFirst&&!StringUtils.isEmpty(projnm)) {
+                if (!isFirst && !StringUtils.isEmpty(projnm)) {
                     String date = sdf.format(row.getCell(1).getDateCellValue());
                     String leader = ExcelUtil.getCellValueForCell(row.getCell(2));
                     String leaderPhone = ExcelUtil.getCellValueForCell(row.getCell(3));
                     String monitor = ExcelUtil.getCellValueForCell(row.getCell(4));
                     String monitorPhone = ExcelUtil.getCellValueForCell(row.getCell(5));
                     String dutyPhone = ExcelUtil.getCellValueForCell(row.getCell(6));
-                    monitor = monitor.replaceAll("（","(").replaceAll("）",")").replaceAll("，",",");
+                    monitor = monitor.replaceAll("（", "(").replaceAll("）", ")").replaceAll("，", ",");
                     String insertSql = "INSERT INTO wcprojdb.p_duty(projnm,date,leader,leader_phone,monitor,monitor_phone,duty_phone) " +
-                            "values('" + projnm + "',to_date('"+date+"','yyyy-mm-dd'),'"+leader+ "','"+leaderPhone+ "','"+monitor+ "','"+monitorPhone+ "','"+dutyPhone+"')";
+                            "values('" + projnm + "',to_date('" + date + "','yyyy-mm-dd'),'" + leader + "','" + leaderPhone + "','" + monitor + "','" + monitorPhone + "','" + dutyPhone + "')";
                     System.out.println(insertSql);
                     sta.executeUpdate(insertSql);
                 }
@@ -185,6 +191,65 @@ public class ExcelUtilTest {
                 }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+
+    @Test
+    public void readWaterSafe() throws Exception {
+        java.sql.Connection con = null;
+        java.sql.Statement sta = null;
+        try {
+            ExcelUtil eu = new ExcelUtil();
+            eu.setExcelPath("F:\\work\\饮水安全\\（省汇总）全面解决农村饮水安全问题项目建议计划表2.xls");
+            eu.setSelectedSheetIdx(0);
+            List<Row> list = eu.readExcel();
+            List<List<String>> myList = new ArrayList<>();
+            for (int i = 0; i < list.size(); i++) {
+                if (i > 6) {
+                    List<String> tmp = new ArrayList<>();
+                    for (int j = 1; j < 13; j++) {
+                        if (ExcelUtil.getCellValueForCell(list.get(i).getCell(2)).equals("合计") || j == 3 || j == 4 || j == 5)
+                            continue;
+                        String value = ExcelUtil.getCellValueForCell(eu.wb, list.get(i).getCell(j));
+                        if ("".equals(value))
+                            value = "0";
+                        tmp.add(value);
+                    }
+                    myList.add(tmp);
+                }
+            }
+            System.out.println(JSON.toJSONString(myList));
+
+//            List<Map<String, Object>> list2 = new ArrayList<>();
+//            con = PgJdbc.getConnection();
+//            sta = con.createStatement();
+//            ResultSet rs = sta.executeQuery("select * from wcdb.b_adcdcode where level=3 and adcd not like '520111%'");
+//            while (rs.next()) {
+//                Map<String, Object> map = new HashMap<>();
+//                map.put("adnm", rs.getString("adnm"));
+//                map.put("adcd", rs.getString("adcd"));
+//                list2.add(map);
+//            }
+//
+//            for (List<String> arr:myList
+//                 ) {
+//                if(arr.size()>0)
+//                for(int i=0;i<list2.size();i++){
+//                    if(arr.get(1).equals(list2.get(i).get("adnm").toString())){
+//                        list2.get(i).put("list",arr);
+//                        break;
+//                    }
+//                }
+//            }
+//            System.out.println(JSON.toJSONString(list2));
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (sta != null)
+                sta.close();
+            if (con != null)
+                con.close();
         }
     }
 }

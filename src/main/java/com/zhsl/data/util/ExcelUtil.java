@@ -8,12 +8,9 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -153,7 +150,6 @@ public class ExcelUtil {
             e.printStackTrace();
         }
     }
-
     public ExcelUtil(){
 
     }
@@ -496,6 +492,7 @@ public class ExcelUtil {
      * @Title: readExcel
      * @Date : 2014-9-11 上午09:53:21
      */
+    public HSSFWorkbook wb = null;// 用于Workbook级的操作，创建、删除Excel
     public List<Row> readExcel_xls(String xlsPath) throws IOException {
 
         // 判断文件是否存在
@@ -504,7 +501,7 @@ public class ExcelUtil {
             throw new IOException("文件名为" + file.getName() + "Excel文件不存在！");
         }
 
-        HSSFWorkbook wb = null;// 用于Workbook级的操作，创建、删除Excel
+
         List<Row> rowList = new ArrayList<Row>();
 
         try {
@@ -573,6 +570,35 @@ public class ExcelUtil {
                 case Cell.CELL_TYPE_FORMULA:
                     result = cell.getCellFormula();
                     break;
+                case Cell.CELL_TYPE_ERROR:
+                    result = cell.getErrorCellValue();
+                    break;
+                case Cell.CELL_TYPE_BLANK:
+                    break;
+                default:
+                    break;
+            }
+        }
+        return result.toString();
+    }
+    public static String getCellValueForCell(HSSFWorkbook wb,Cell cell) {
+        Object result = "";
+        if (cell != null) {
+            switch (cell.getCellType()) {
+                case Cell.CELL_TYPE_STRING:
+                    result = cell.getStringCellValue();
+                    break;
+                case Cell.CELL_TYPE_NUMERIC:
+                    DecimalFormat df = new DecimalFormat("0");
+                    result = df.format(cell.getNumericCellValue());
+                    break;
+                case Cell.CELL_TYPE_BOOLEAN:
+                    result = cell.getBooleanCellValue();
+                    break;
+                case Cell.CELL_TYPE_FORMULA:
+                    FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+                    result = String.valueOf(new Double(evaluator.evaluate(cell).getNumberValue()).intValue());
+                break;
                 case Cell.CELL_TYPE_ERROR:
                     result = cell.getErrorCellValue();
                     break;
