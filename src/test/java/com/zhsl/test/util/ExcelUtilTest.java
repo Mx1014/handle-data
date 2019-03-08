@@ -201,20 +201,32 @@ public class ExcelUtilTest {
         java.sql.Statement sta = null;
         try {
             ExcelUtil eu = new ExcelUtil();
-            eu.setExcelPath("F:\\work\\饮水安全\\（省汇总）全面解决农村饮水安全问题项目建议计划表2.xls");
+            eu.setExcelPath("F:\\work\\饮水安全\\（省汇总）全面解决农村饮水安全问题项目建议计划表3.5.xls");
             eu.setSelectedSheetIdx(0);
             List<Row> list = eu.readExcel();
-            List<List<String>> myList = new ArrayList<>();
+            List<List<Object>> myList = new ArrayList<>();
             for (int i = 0; i < list.size(); i++) {
                 if (i > 6) {
-                    List<String> tmp = new ArrayList<>();
+                    List<Object> tmp = new ArrayList<>();
                     for (int j = 1; j < 13; j++) {
                         if (ExcelUtil.getCellValueForCell(list.get(i).getCell(2)).equals("合计") || j == 3 || j == 4 || j == 5)
                             continue;
-                        String value = ExcelUtil.getCellValueForCell(eu.wb, list.get(i).getCell(j));
+                        String value = "";
+                        if (j == 12)
+                            value = ExcelUtil.getCellValueForCellNum(eu.wb, list.get(i).getCell(j));
+                        else
+                            value = ExcelUtil.getCellValueForCell(eu.wb, list.get(i).getCell(j));
                         if ("".equals(value))
                             value = "0";
                         tmp.add(value);
+                    }
+                    if (tmp.size() > 1 && "金海湖新区".equals(tmp.get(1))) {
+                        tmp.add(105.431113243103);
+                        tmp.add(27.232156434805);
+                    }
+                    if (tmp.size() > 1 && "百里杜鹃".equals(tmp.get(1))) {
+                        tmp.add(105.93554);
+                        tmp.add(27.17888);
                     }
                     myList.add(tmp);
                 }
