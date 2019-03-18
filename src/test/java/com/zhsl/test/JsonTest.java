@@ -88,7 +88,7 @@ public class JsonTest {
         try {
             con = PgJdbc.getConnection();
             sta = con.createStatement();
-            ResultSet rs = sta.executeQuery("select id,name from drinkingwaterdb.t_projects where year=2019 and process=1 and project_img is not null order by id desc limit 100");
+            ResultSet rs = sta.executeQuery("select p.id,p.name from drinkingwaterdb.t_projects p where county_adcd='522634000000000' and p.year=2019 and p.process=1 and p.project_img is not null and EXISTS (select 1 from drinkingwaterdb.t_relation where pro_id=p.id) limit 100");
             while (rs.next()) {
                 Map<String, Object> map = new HashMap<>();
                 map.put("id", rs.getBigDecimal("id"));
