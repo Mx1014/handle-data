@@ -9,7 +9,7 @@ public class Area {
     private String adcd;
     private String adnm;
     private String padcd;
-
+    private Integer level;
     public Area() {
     }
 
@@ -43,12 +43,21 @@ public class Area {
         this.padcd = padcd;
     }
 
+    public Integer getLevel() {
+        return level;
+    }
+
+    public void setLevel(Integer level) {
+        this.level = level;
+    }
+
     @Override
     public String toString() {
         return "Area{" +
                 "adcd='" + adcd + '\'' +
                 ", adnm='" + adnm + '\'' +
                 ", padcd='" + padcd + '\'' +
+                ", level=" + level +
                 '}';
     }
 }

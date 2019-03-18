@@ -30,7 +30,7 @@ public class AreaTest {
             System.out.println(list.toString());
             // 1：利用File类找到要操作的对象
             File file = new File("D:" + File.separator + "area" + File.separator + "area.json");
-            if(!file.getParentFile().exists()){
+            if (!file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();
             }
             //2：准备输出流
@@ -43,7 +43,7 @@ public class AreaTest {
     }
 
     private List<Area> getArea(String url, String padcd, int level) throws Exception {
-        System.out.println("开始获取"+level+"级行政区信息");
+
         String name = "";
         if (level == 2)
             name = "citytr";
@@ -57,7 +57,7 @@ public class AreaTest {
         Document doc = null;
         try {
             doc = Jsoup.parse(new URL(url), 5000);
-        }catch (Exception e){
+        } catch (Exception e) {
             doc = Jsoup.parse(new URL(url), 5000);
         }
 
@@ -70,6 +70,8 @@ public class AreaTest {
                 area.setAdcd(aList.get(0).html());
                 area.setAdnm(aList.get(1).html());
                 area.setPadcd(padcd);
+                area.setLevel(level);
+
                 list.add(area);
                 String cUrl = url.substring(0, url.lastIndexOf("/") + 1);
                 list.addAll(getArea(cUrl + aList.get(0).attr("href"), aList.get(0).html(), level + 1));
@@ -77,8 +79,10 @@ public class AreaTest {
                 Elements tdList = e.getElementsByTag("td");
                 if (tdList.size() > 0) {
                     area.setAdcd(tdList.get(0).html());
-                    area.setAdnm(tdList.get(1).html());
+                    area.setAdnm(tdList.get(tdList.size() - 1).html());
                     area.setPadcd(padcd);
+                    area.setLevel(level);
+                    System.out.println(area.toString());
                     list.add(area);
                 }
             }
