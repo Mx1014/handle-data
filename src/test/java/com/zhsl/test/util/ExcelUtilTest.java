@@ -264,4 +264,30 @@ public class ExcelUtilTest {
                 con.close();
         }
     }
+
+    @Test
+    public void readExcelToJson(){
+        try {
+            ExcelUtil eu = new ExcelUtil();
+            eu.setExcelPath("F:\\work\\吊洞水库\\temp.xls");
+            eu.setSelectedSheetIdx(0);
+            List<Row> list = eu.readExcel();
+            System.out.println("------------");
+            List<List<String>> myList = new ArrayList<>();
+            for (int i = 0; i < list.size(); i++) {
+                if (i > 0) {
+                    List<String> tmp = new ArrayList<>();
+                    for (int j = 0; j < 9; j++) {
+                        String value = ExcelUtil.getCellValueForCell(eu.wb,list.get(i).getCell(j));
+                        tmp.add(value);
+                    }
+                    if(tmp!=null&&!StringUtils.isEmpty(tmp.get(0)))
+                        myList.add(tmp);
+                }
+            }
+            System.out.println(JSON.toJSONString(myList));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -1,6 +1,7 @@
 package com.zhsl.test;
 
 import com.alibaba.fastjson.JSON;
+import com.zhsl.data.entity.FamilyVo;
 import com.zhsl.data.jdbc.pg.PgJdbc;
 import com.zhsl.data.util.ExcelUtil;
 import com.zhsl.data.util.Md5PasswordEncoder;
@@ -218,16 +219,16 @@ public class WaterSafeDataTest {
     public void createOneUser() {
         java.sql.Connection con = null;
         java.sql.Statement sta = null;
-        String adcd = "520500000000000";
+        String adcd = "522300000000000";
         String area = "";
-        String job = "省水利设计院";
-        String userId = "15985194450";
-        String name = "郝志斌";
+        String job = "黔西南统计";
+        String userId = "qianxntj";
+        String name = "黔西南统计";
         try {
             con = PgJdbc.getConnection();
             sta = con.createStatement();
             String pass = Md5PasswordEncoder.encrypt("000000", userId);
-            sta.execute("insert into sysdb.sys_user(user_id,user_name,password,area_adcd,role_id,area,job,mobile) values('" + userId + "','" + name + "','" + pass + "','" + adcd + "',5,'" + area + "','" + job + "','" + userId + "')");
+            sta.execute("insert into sysdb.sys_user(user_id,user_name,password,area_adcd,role_id,area,job,mobile) values('" + userId + "','" + name + "','" + pass + "','" + adcd + "',6,'" + area + "','" + job + "','" + userId + "')");
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -242,7 +243,42 @@ public class WaterSafeDataTest {
 
         }
     }
+    @Test
+    public void updatePWD() {
+        java.sql.Connection con = null;
+        java.sql.Statement sta = null;
+        try {
+            con = PgJdbc.getConnection();
+            sta = con.createStatement();
+            List<Map<String, Object>> list = new ArrayList<>();
+            ResultSet rs = sta.executeQuery("select * from sysdb.sys_user where role_id=7 and user_name like '%查询'");
+            while (rs.next()) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("user_id", rs.getString("user_id"));
+                map.put("id", rs.getInt("id"));
+                list.add(map);
+            }
+            for (Map<String, Object> o : list
+                    ) {
+                String userId = o.get("user_id").toString();
 
+                String pass = Md5PasswordEncoder.encrypt("000000", userId);
+                sta.execute("update sysdb.sys_user set password='" + pass + "' where user_id='" + userId+"'");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (sta != null)
+                    sta.close();
+                if (con != null)
+                    con.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
     @Test
     public void updateUser() {
         java.sql.Connection con = null;
@@ -273,6 +309,116 @@ public class WaterSafeDataTest {
                 sta.execute("update sysdb.sys_user set user_id='" + userId + "',password='" + pass + "' where id=" + id);
             }
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (sta != null)
+                    sta.close();
+                if (con != null)
+                    con.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
+
+    @Test
+    public void delFamily() {
+        java.sql.Connection con = null;
+        java.sql.Statement sta = null;
+        try {
+            con = PgJdbc.getConnection();
+            sta = con.createStatement();
+            List<FamilyVo> list = new ArrayList<>();
+            ResultSet rs = sta.executeQuery("select * from drinkingwaterdb.t_check_family where user_id='liups015'");
+            while (rs.next()) {
+                FamilyVo o = new FamilyVo();
+                o.setName(rs.getString("name"));
+                o.setGroup(rs.getString("_group"));
+                o.setVillage(rs.getString("village"));
+                o.setCountry(rs.getString("country"));
+                o.setCounty(rs.getString("county"));
+                o.setId(rs.getInt("id"));
+                list.add(o);
+            }
+            List<FamilyVo> listTmp = new ArrayList<>();
+            for (FamilyVo o : list
+                    ) {
+                if(containsFamily(o,listTmp)){
+                    sta.execute("delete from drinkingwaterdb.t_check_family where id="+o.getId());
+                }else{
+                    listTmp.add(o);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (sta != null)
+                    sta.close();
+                if (con != null)
+                    con.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
+    private boolean containsFamily(FamilyVo o,List<FamilyVo> list){
+        for(int i=0;i<list.size();i++){
+            FamilyVo familyVo = list.get(i);
+            if(familyVo.getCounty().equals(o.getCounty())&&familyVo.getCountry().equals(o.getCountry())&&familyVo.getVillage().equals(o.getVillage())&&familyVo.getGroup().equals(o.getGroup())&&familyVo.getName().equals(o.getName())){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    @Test
+    public void testTmp() {
+        java.sql.Connection con = null;
+        java.sql.Statement sta = null;
+        try {
+            con = PgJdbc.getConnection();
+            sta = con.createStatement();
+            List<FamilyVo> list = new ArrayList<>();
+            ResultSet rs = sta.executeQuery("select * from drinkingwaterdb.t_check_inspect where country like '%社区'");
+            while (rs.next()) {
+                FamilyVo o = new FamilyVo();
+                o.setVillage(rs.getString("village"));
+                o.setCountry(rs.getString("country"));
+                o.setId(rs.getInt("id"));
+                list.add(o);
+            }
+            for (FamilyVo o : list
+                    ) {
+                if(o.getCountry().contains("乡")||o.getCountry().contains("镇")||o.getCountry().contains("街道")||o.getCountry().contains("办事处")){
+                    String country = "";
+                    String village = "";
+                    if(o.getCountry().contains("乡")){
+                        country = o.getCountry().split("乡")[0]+"乡";
+                        village = o.getCountry().split("乡")[1]+o.getVillage();
+                    }else if(o.getCountry().contains("镇")){
+                        country = o.getCountry().split("镇")[0]+"镇";
+                        village = o.getCountry().split("镇")[1]+o.getVillage();
+                    }else if(o.getCountry().contains("办事处")){
+                        country = o.getCountry().split("办事处")[0]+"办事处";
+                        village = o.getCountry().split("办事处")[1]+o.getVillage();
+                    }
+                    else{
+                        country = o.getCountry().split("街道")[0]+"街道";
+                        village = o.getCountry().split("街道")[1]+o.getVillage();
+                    }
+                    String sql = String.format("update drinkingwaterdb.t_check_inspect set country='%s',village='%s' where id=%d",country,village,o.getId());
+                    System.out.println(sql);
+                    sta.execute(sql);
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

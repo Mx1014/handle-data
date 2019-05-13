@@ -581,7 +581,7 @@ public class ExcelUtil {
                     result = cell.getStringCellValue();
                     break;
                 case Cell.CELL_TYPE_NUMERIC:
-                    DecimalFormat df = new DecimalFormat("0");
+                    DecimalFormat df = new DecimalFormat("0.00");
                     result = df.format(cell.getNumericCellValue());
                     break;
                 case Cell.CELL_TYPE_BOOLEAN:
@@ -610,7 +610,7 @@ public class ExcelUtil {
                     result = cell.getStringCellValue();
                     break;
                 case Cell.CELL_TYPE_NUMERIC:
-                    DecimalFormat df = new DecimalFormat("0");
+                    DecimalFormat df = new DecimalFormat("0.0");
                     result = df.format(cell.getNumericCellValue());
                     break;
                 case Cell.CELL_TYPE_BOOLEAN:
@@ -618,7 +618,7 @@ public class ExcelUtil {
                     break;
                 case Cell.CELL_TYPE_FORMULA:
                     FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
-                    result = String.valueOf(new Double(evaluator.evaluate(cell).getNumberValue()).intValue());
+                    result = String.valueOf(new Double(evaluator.evaluate(cell).getNumberValue()));
                     break;
                 case Cell.CELL_TYPE_ERROR:
                     result = cell.getErrorCellValue();

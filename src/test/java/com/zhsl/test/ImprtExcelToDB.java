@@ -81,6 +81,7 @@ public class ImprtExcelToDB {
                 Map<String, Object> map = new HashMap<>();
                 map.put("village", rs.getString("village").trim());
                 map.put("county", rs.getString("county_adnm").trim());
+                map.put("country", rs.getString("country_adnm").trim());
                 map.put("id", rs.getInt("id"));
                 list.add(map);
             }
@@ -90,15 +91,19 @@ public class ImprtExcelToDB {
                 Map<String, Object> map = new HashMap<>();
                 map.put("village", rs.getString("village").trim());
                 map.put("county", rs.getString("county").trim());
+                map.put("country", rs.getString("country").trim());
+                map.put("v_adcd", rs.getString("v_adcd").trim());
                 listPoor.add(map);
             }
             int count = 0;
             for (Map<String, Object> map : list
                     ) {
                 boolean poor = false;
+                String v_adcd = "";
                 for(int i=0;i<listPoor.size();i++){
                     Map<String, Object> poorMap = listPoor.get(i);
-                    if(poorMap.get("county").equals(map.get("county").toString())&&map.get("village").toString().contains(poorMap.get("village").toString())){
+                    if(poorMap.get("county").equals(map.get("county").toString())&&poorMap.get("country").equals(map.get("country").toString())&&map.get("village").toString().contains(poorMap.get("village").toString())){
+                        v_adcd = poorMap.get("v_adcd").toString();
                         poor = true;
                         break;
                     }
@@ -106,7 +111,7 @@ public class ImprtExcelToDB {
 
                 if(poor){
                     int id = (int) map.get("id");
-                    String sql = "update drinkingwaterdb.t_check_village set is_poor=1 where id=" + id;
+                    String sql = "update drinkingwaterdb.t_check_village set is_poor=1,village_adcd='"+v_adcd+"' where id=" + id;
                     sta.execute(sql);
                     System.out.println(sql);
                     count++;
