@@ -617,8 +617,13 @@ public class ExcelUtil {
                     result = cell.getBooleanCellValue();
                     break;
                 case Cell.CELL_TYPE_FORMULA:
-                    FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
-                    result = String.valueOf(new Double(evaluator.evaluate(cell).getNumberValue()));
+                    try {
+                        FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+                        result = String.valueOf(new Double(evaluator.evaluate(cell).getNumberValue()));
+                    }catch (Exception e){
+
+                    }
+
                     break;
                 case Cell.CELL_TYPE_ERROR:
                     result = cell.getErrorCellValue();
