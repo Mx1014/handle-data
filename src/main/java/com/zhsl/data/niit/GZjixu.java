@@ -35,12 +35,12 @@ import java.util.Map;
 public class GZjixu {
 
     /**
-     * http://guizhou.zxjxjy.com 15608505805 15608505805
+     * http://guizhou.zxjxjy.com 18585230345 316145286
      *
      * @param args
      */
     public static void main(String[] args) {
-        String cookie = "UM_distinctid=165ac98f0cb0-047c3c1a76bd8-1571466f-1fa400-165ac98f0cc54e; CNZZDATA1254056072=2068168552-1536198433-%7C1536221568; Hm_lvt_b21659b538990a950b60a32e93668ae4=1536199029,1536220619; edu-s=69e0398d0ef64dc99692dd29eb0929aa; openWindow=true";
+        String cookie = "UM_distinctid=16c659830a0125-0bef4171ad9dce-5f1d3a17-1fa400-16c659830a151a; edu-s=02a65b78302a4021ad53ac869ff3adb1; CNZZDATA1254056072=33943665-1565071460-null%7C1565308458; Hm_lvt_b21659b538990a950b60a32e93668ae4=1565223252,1565233145,1565233252,1565312012; Hm_lpvt_b21659b538990a950b60a32e93668ae4=1565312026";
         go(cookie);
     }
 
@@ -68,9 +68,36 @@ public class GZjixu {
                     String name = element.getElementsByClass("xszt_name").first().html();
                     if ("开始学习".equals(isReady) || "继续学习".equals(isReady)) {
                         System.out.println("time=" + time + "  isReady=" + isReady + "  url=" + url + "  name=" + name);
-                        String data = getParam(cookie, time, url);
+
+                        //处理时间
+                        String[] times = time.split(":");
+                        Integer hour = new Integer(times[0]);
+                        Integer minte = new Integer(times[1]);
+                        Integer ss = new Integer(times[2]);
+                        Integer total = (hour * 60 * 60 + minte * 60 + ss) * 1000;
+                        Integer tt = new Integer(120000);
+
+                        String status = "02";
+                        long currentTimeMillis = System.currentTimeMillis();
+//                        while (tt <= total) {
+//                            time = tt.toString();
+//                            System.out.println(time);
+//
+//                            String data = getParam(cookie, time, url, status);
+//                            System.out.println(data);
+//                            ready(cookie, data, url, currentTimeMillis);
+//                            if ((tt + new Integer(120000)) > total && tt != total) {
+//                                status = "completed";
+//                                tt = total;
+//                            } else
+//                                tt += new Integer(120000);
+//
+//                            currentTimeMillis += 120*1000;
+//                        }
+                        status = "completed";
+                        String data = getParam(cookie, total.toString(), url, status);
                         System.out.println(data);
-                        ready(cookie, data, url);
+                        ready(cookie, data, url, currentTimeMillis);
                     }
                 }
             }
@@ -79,17 +106,7 @@ public class GZjixu {
         }
     }
 
-    private static String getParam(String cookie, String time, String url) {
-        //处理时间
-        String[] times = time.split(":");
-        BigDecimal hour = new BigDecimal(times[0]);
-        BigDecimal minte = new BigDecimal(times[1]);
-        BigDecimal ss = new BigDecimal(times[2]);
-        hour = hour.multiply(BigDecimal.valueOf(60 * 60));
-        minte = minte.multiply(BigDecimal.valueOf(60));
-        ss = ss.add(BigDecimal.valueOf(1));
-        time = hour.add(minte).add(ss).multiply(BigDecimal.valueOf(1000)).toString();
-
+    private static String getParam(String cookie, String time, String url, String status) {
         //获取 usid scoid
         Map<String, String> us = getUserIdAndScoreId(cookie, url);
         String usid = us.get("usid");
@@ -99,39 +116,7 @@ public class GZjixu {
         String leid = map.get("courseid");
         String tlid = map.get("coursewareid");
 
-//        JSONObject jsonObject = new JSONObject();
-//        jsonObject.put("direct", "cmiputcat");
-//        jsonObject.put("usid", usid);
-//        jsonObject.put("tlid", tlid);
-//        jsonObject.put("scoid", scoid);
-//        jsonObject.put("leid", leid);
-//
-//        JSONObject score = new JSONObject();
-//        score.put("raw", "");
-//
-//        JSONObject core = new JSONObject();
-//        core.put("score", score);
-//        core.put("credit", "");
-//        core.put("entry", "");
-//        core.put("exit", "");
-//        core.put("lesson_mode", "");
-//        core.put("session_time", "");
-//        core.put("student_name", "");
-//        core.put("total_time", time);
-//        core.put("lesson_location", time);
-//        core.put("lesson_status", "completed");
-//        core.put("student_id", usid);
-//
-//        JSONObject cmi = new JSONObject();
-//        cmi.put("comments", "");
-//        cmi.put("comments_from_lms", "");
-//        cmi.put("launch_data", "");
-//        cmi.put("comments", "");
-//        cmi.put("suspend_data", "");
-//        cmi.put("core", core);
-//        jsonObject.put("cmi", cmi);
-//        String data = JSON.toJSONString(jsonObject);
-        String data ="{\"direct\":\"cmiputcat\",\"usid\":\""+usid+"\",\"tlid\":\""+tlid+"\",\"scoid\":\""+scoid+"\",\"leid\":\""+leid+"\",\"cmi\":{\"core\":{\"score\":{\"raw\":\"\"},\"credit\":\"\",\"entry\":\"\",\"exit\":\"\",\"lesson_location\":\""+time+"\",\"lesson_mode\":\"\",\"lesson_status\":\"completed\",\"session_time\":\"\",\"student_id\":\""+usid+"\",\"student_name\":\"\",\"total_time\":\"\"},\"comments\":\"\",\"comments_from_lms\":\"\",\"launch_data\":\"\",\"suspend_data\":\"\"}}";
+         String data = "{\"direct\":\"cmiputcat\",\"usid\":\"" + usid + "\",\"tlid\":\"" + tlid + "\",\"scoid\":\"" + scoid + "\",\"leid\":\"" + leid + "\",\"cmi\":{\"core\":{\"score\":{\"raw\":\"\"},\"credit\":\"\",\"entry\":\"\",\"exit\":\"\",\"lesson_location\":\"" + time + "\",\"lesson_mode\":\"\",\"lesson_status\":\"" + status + "\",\"session_time\":\"\",\"student_id\":\"" + usid + "\",\"student_name\":\"\",\"total_time\":\"\"},\"comments\":\"\",\"comments_from_lms\":\"\",\"launch_data\":\"\",\"suspend_data\":\"\"}}";
         return data;
     }
 
@@ -159,8 +144,8 @@ public class GZjixu {
         return us;
     }
 
-    private static void ready(String cookie, String data, String url) {
-        checkSession(cookie);
+    private static void ready(String cookie, String data, String url, long currentTimeMillis) {
+        checkSession(cookie, currentTimeMillis);
         try {
             data = setEncryption(data);
             //System.out.println(data);
@@ -190,11 +175,11 @@ public class GZjixu {
     }
 
 
-    private static void checkSession(String cookie) {
+    private static void checkSession(String cookie, long currentTimeMillis) {
         try {
             HttpClient client = new DefaultHttpClient();
             //发送get请求
-            HttpGet request = new HttpGet("http://guizhou.zxjxjy.com/userplatform/checkSession?_=" + System.currentTimeMillis());
+            HttpGet request = new HttpGet("http://guizhou.zxjxjy.com/userplatform/checkSession?_=" + currentTimeMillis);
             request.addHeader("Referer", "http://guizhou.zxjxjy.com/p/classroom/simple");
             request.addHeader("Cookie", cookie);
             HttpResponse response = client.execute(request);

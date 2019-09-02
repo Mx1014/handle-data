@@ -7,11 +7,8 @@ import com.serotonin.modbus4j.ModbusMaster;
 import com.serotonin.modbus4j.exception.ModbusInitException;
 import com.serotonin.modbus4j.exception.ModbusTransportException;
 import com.serotonin.modbus4j.ip.IpParameters;
-import com.serotonin.modbus4j.msg.ModbusRequest;
-import com.serotonin.modbus4j.msg.ModbusResponse;
-import com.serotonin.modbus4j.msg.ReadHoldingRegistersRequest;
-import com.serotonin.modbus4j.msg.WriteRegistersRequest;
-import com.serotonin.modbus4j.msg.WriteRegistersResponse;
+import com.serotonin.modbus4j.locator.BaseLocator;
+import com.serotonin.modbus4j.msg.*;
 import com.serotonin.modbus4j.sero.util.queue.ByteQueue;
 /**
  * modbus 处理类
@@ -120,9 +117,11 @@ public class ModbusHandler {
      */
     public static ModbusRequest getRequest(int salveId, int start,
                                            int readLenth, ModbusMaster tcpMaster) {
-        ModbusRequest modbusRequest = null;
+        //ModbusRequest modbusRequest = null;
+        ReadDiscreteInputsRequest modbusRequest = null;
         try {
-            modbusRequest = new ReadHoldingRegistersRequest(salveId, start,readLenth);
+            //modbusRequest = new ReadHoldingRegistersRequest(salveId, start,readLenth);
+            modbusRequest = new ReadDiscreteInputsRequest(salveId, start,readLenth);
             return modbusRequest;
         } catch (ModbusTransportException e) {
             e.printStackTrace();
@@ -211,12 +210,22 @@ public class ModbusHandler {
         if (modbusRequest == null) {System.out.println("request is null");return null;}
         ModbusResponse response = getModbusResponse(tcpMaster, modbusRequest);// 发送请求，得到Response
 
+        try {
+
+            BaseLocator<Boolean> loc = BaseLocator.inputStatus(1, 0);
+            Boolean value = tcpMaster.getValue(loc);
+            System.out.println(value);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+
         ByteQueue byteQueue = new ByteQueue(12);
         response.write(byteQueue);
         System.out.println("功能" + modbusRequest.getFunctionCode());
         System.out.println("从站地址:" + modbusRequest.getSlaveId());
         System.out.println("收到的响应信息大小" + byteQueue.size());
-        System.out.println("收到的响应信息小:" + byteQueue);
+        System.out.println("收到的响应信息:" + byteQueue);
         return byteQueue;
     }
 

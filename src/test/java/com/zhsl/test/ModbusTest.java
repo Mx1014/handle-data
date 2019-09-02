@@ -15,9 +15,9 @@ public class ModbusTest {
     @Test
     public void read() {
         try {
-            BaseLocator<Boolean> loc = BaseLocator.coilStatus(1, 10);
-            Boolean value = Modbus4jUtils.getMaster().getValue(loc);
-            System.out.println(value);
+//            BaseLocator<Boolean> loc = BaseLocator.coilStatus(1, 10);
+//            Boolean value = Modbus4jUtils.getMaster().getValue(loc);
+//            System.out.println(value);
 
             ByteQueue result = ModbusHandler.modbusRTCP("192.168.100.236", 502, 1,
                     0, 10);

@@ -167,33 +167,37 @@ public class Modbus4jUtils {
     public static void main(String[] args) {
         try {
             // 01测试
-            Boolean v011 = readCoilStatus(1, 0);
-            Boolean v012 = readCoilStatus(1, 1);
-            Boolean v013 = readCoilStatus(1, 6);
-            System.out.println("v011:" + v011);
-            System.out.println("v012:" + v012);
-            System.out.println("v013:" + v013);
+//            Boolean v011 = readCoilStatus(1, 0);
+//            Boolean v012 = readCoilStatus(1, 1);
+//            Boolean v013 = readCoilStatus(1, 6);
+//            System.out.println("v011:" + v011);
+//            System.out.println("v012:" + v012);
+//            System.out.println("v013:" + v013);
             // 02测试
-            Boolean v021 = readInputStatus(1, 0);
-            Boolean v022 = readInputStatus(1, 1);
-            Boolean v023 = readInputStatus(1, 2);
-            System.out.println("v021:" + v021);
-            System.out.println("v022:" + v022);
-            System.out.println("v023:" + v023);
+            for (int i = 0; i < 10; i++) {
+                Boolean vb = readInputStatus(1, i);
+                System.out.println("v"+i+":" + vb);
+            }
 
             // 03测试
-            Number v031 = readHoldingRegister(1, 1, DataType.FOUR_BYTE_FLOAT);// 注意,float
-            Number v032 = readHoldingRegister(1, 3, DataType.FOUR_BYTE_FLOAT);// 同上
-            System.out.println("v031:" + v031);
-            System.out.println("v032:" + v032);
+//            for (int i = 0; i < 10; i++) {
+//                Number vf = readHoldingRegister(1, i, DataType.TWO_BYTE_INT_SIGNED);// 注意,float
+//                System.out.println("v"+i+":" + vf);
+//            }
 
-            // 04测试
-            Number v041 = readInputRegisters(1, 1, DataType.FOUR_BYTE_FLOAT);//
-            Number v042 = readInputRegisters(1, 3, DataType.FOUR_BYTE_FLOAT);//
-            System.out.println("v041:" + v041);
-            System.out.println("v042:" + v042);
-            // 批量读取
-            batchRead();
+
+//            Number v031 = readHoldingRegister(1, 1, DataType.FOUR_BYTE_FLOAT);// 注意,float
+//            Number v032 = readHoldingRegister(1, 3, DataType.FOUR_BYTE_FLOAT);// 同上
+//            System.out.println("v031:" + v031);
+//            System.out.println("v032:" + v032);
+//
+//            // 04测试
+//            Number v041 = readInputRegisters(1, 1, DataType.FOUR_BYTE_FLOAT);//
+//            Number v042 = readInputRegisters(1, 3, DataType.FOUR_BYTE_FLOAT);//
+//            System.out.println("v041:" + v041);
+//            System.out.println("v042:" + v042);
+//            // 批量读取
+//            batchRead();
 
         } catch (Exception e) {
             e.printStackTrace();
